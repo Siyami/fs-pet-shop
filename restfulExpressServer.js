@@ -89,6 +89,77 @@ app.get('/pets/:id', (req, res) => {
   });
 });
 
+// Update one
+app.patch('/pets/:id', (req, res) => {
+  fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
+    if (readErr) {
+      console.error(readErr.stack);
+      return res.sendStatus(500);
+    }
+
+    const id = Number.parseInt(req.params.id);
+    const pets = JSON.parse(petsJSON);
+
+    if (id < 0 || id >= pets.length || Number.isNaN(id)) {
+      return res.sendStatus(404);
+    }
+
+    const name = req.body.name;
+    const age = Number.parseInt(req.body.age);
+    const kind = req.body.kind;
+
+    const pet = {
+      name, age, kind
+    }
+
+    if (!name || !kind || Number.isNaN(age)) {
+      return res.sendStatus(400);
+    }
+
+    pets[id] = pet;
+
+    const newPetsJSON = JSON.stringify(pets);
+
+    fs.writeFile(petsPath, newPetsJSON, (writeErr) => {
+      if (writeErr) {
+        console.error(writeErr.stack);
+        return res.sendStatus(500);
+      }
+
+      res.send(pet);
+    });
+  });
+});
+
+// Delete one
+app.delete('/pets/:id', (req, res) => {
+  fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
+    if (readErr) {
+      console.error(readErr.stack);
+      return res.sendStatus(500);
+    }
+
+    const id = Number.parseInt(req.params.id);
+    const pets = JSON.parse(petsJSON);
+
+    if (id < 0 || id >= pets.length || Number.isNaN(id)) {
+      return res.sendStatus(404);
+    }
+
+    const pet = pets.splice(id, 1)[0];
+    const newPetsJSON = JSON.stringify(pets);
+
+    fs.writeFile(petsPath, newPetsJSON, (writeErr) => {
+      if (writeErr) {
+        console.error(writeErr.stack);
+        return res.sendStatus(500);
+      }
+
+      res.send(pet);
+    });
+  });
+});
+
 app.use((req, res) => {
   res.sendStatus(404);
 });
