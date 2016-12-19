@@ -104,19 +104,28 @@ app.patch('/pets/:id', (req, res) => {
       return res.sendStatus(404);
     }
 
-    const name = req.body.name;
-    const age = Number.parseInt(req.body.age);
-    const kind = req.body.kind;
-
-    const pet = {
-      name, age, kind
-    }
-
-    if (!name || !kind || Number.isNaN(age)) {
+    //fix age
+    if (Number.isNaN(parseInt(req.body.age))) {
       return res.sendStatus(400);
     }
+    if (req.body.name) {
+      pets[id].name = req.body.name;
+    }
+    if (req.body.kind) {
+      pets[id].kind = req.body.kind;
+    }
+    pets[id].age = req.body.age;
 
-    pets[id] = pet;
+
+    // const pet = {
+    //   name, age, kind
+    // }
+
+    // if (Number.isNaN(age)) {
+    //   return res.sendStatus(400);
+    // }
+
+    // pets[id] = pet;
 
     const newPetsJSON = JSON.stringify(pets);
 
@@ -126,7 +135,7 @@ app.patch('/pets/:id', (req, res) => {
         return res.sendStatus(500);
       }
 
-      res.send(pet);
+      res.send(pets[id]);
     });
   });
 });
