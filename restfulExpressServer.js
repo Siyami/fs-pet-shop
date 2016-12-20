@@ -116,17 +116,6 @@ app.patch('/pets/:id', (req, res) => {
     }
     pets[id].age = req.body.age;
 
-
-    // const pet = {
-    //   name, age, kind
-    // }
-
-    // if (Number.isNaN(age)) {
-    //   return res.sendStatus(400);
-    // }
-
-    // pets[id] = pet;
-
     const newPetsJSON = JSON.stringify(pets);
 
     fs.writeFile(petsPath, newPetsJSON, (writeErr) => {
@@ -163,7 +152,6 @@ app.delete('/pets/:id', (req, res) => {
         console.error(writeErr.stack);
         return res.sendStatus(500);
       }
-
       res.send(pet);
     });
   });
